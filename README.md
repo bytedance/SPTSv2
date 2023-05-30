@@ -1,7 +1,7 @@
 
 # SPTS v2: Single-Point Scene Text Spotting
 
-The official implementation of [SPTS v2: Single-Point Text Spotting](https://arxiv.org/pdf/2301.01635.pdf). The SPTSv2 tackles scene text spotting as an end-to-end sequence prediction task and requires only extremely low-cost single-point annotations. Below is the overall architecture of SPTSv2. 
+The official implementation of [SPTS v2: Single-Point Text Spotting](https://arxiv.org/pdf/2301.01635.pdf). The SPTSv2 which achieves 19× faster inference speed tackles scene text spotting as an end-to-end sequence prediction task and requires only extremely low-cost single-point annotations. Below is the overall architecture of SPTSv2.  
 
 ![Image text](IMG/pipeline.png)
 
@@ -82,10 +82,10 @@ data
 
 The model training in the original paper uses 16 GPUs (2 nodes, 8 A100 GPUs per node). Below are the instructions for the training using a single machine with 8 GPUs, which can be simply modified to multi-node training following [PyTorch Distributed Docs](https://pytorch.org/docs/1.8.0/distributed.html).
 
-You can download our pretrained weight from [Google Drive](https://drive.google.com/file/d/1nI4KlHTbFxgVI8pNSGjbTRxS4OohgTq5/view?usp=sharing) or [BaiduNetDisk](https://pan.baidu.com/s/1yNSTZNfEYdmy_3lstkUoFg?pwd=syz3), or pretrain the model from scratch using the `run.sh` file. If finetuning, just set `--resume` and `--finetune` in `run.sh`.
+You can download our pretrained weight from [Google Drive](https://drive.google.com/file/d/1tzaq8XCR72FzPMzPiY-ooOfubqzbxtD7/view?usp=share_link) or [BaiduNetDisk](https://pan.baidu.com/s/1v0WreR5yZtKa_XHMjX_3wQ?pwd=3pcu), password: 3pcu, or pretrain the model from scratch using the `run.sh` file. If finetuning, just set `--resume` and `--finetune` in `run.sh`.
 
 ## Inference and visualization
-The trained models can be obtained after finishing the above steps. You can also download the models for the Total-Text, SCUT-CTW1500, ICDAR2013, ICDAR2015  a and inversetext datasets from [GoogleDrive](https://drive.google.com/drive/folders/1qLPOpwOV40RyEB8ZWd-0LZ_HkozombnO?usp=sharing) or [BaiduNetDisk](https://pan.baidu.com/s/17OpkuZr_59vVEgAoz2nsmQ) password: b9u5. Then you can use `test.sh` or `predict.py` to output results and visualization.
+The trained models can be obtained after finishing the above steps. You can also download the models for the Total-Text, SCUT-CTW1500, ICDAR2013, ICDAR2015 and inversetext datasets from [GoogleDrive](https://drive.google.com/drive/folders/18sTx9hPBXZuD1_pURLZiYxa4xMLOK193?usp=share_link) or [BaiduNetDisk](https://pan.baidu.com/s/1c0-4QYAWD8huKBrL_Yp6VQ?pwd=2k2m) password: 2k2m. Then you can use `test.sh` or `predict.py` to output results and visualization.
 
 ![Image text](IMG/test_0000095.jpg)
 ## Evaluation
@@ -152,4 +152,4 @@ This repository can only be used for non-commercial research purpose.
 For commercial use, please contact Jiaxin Zhang (zhangjiaxin.zjx1995@bytedance.com).
 
 ## Acknowledgement
-We sincerely thank [Stable-Pix2Seq](https://github.com/gaopengcuhk/Stable-Pix2Seq), [Pix2Seq](https://github.com/google-research/pix2seq), [DETR](https://github.com/facebookresearch/detr), [SPTS](https://github.com/shannanyinxiang/SPTS) and [ABCNet](https://github.com/aim-uofa/AdelaiDet) for their excellent works.
+We sincerely thank [Stable-Pix2Seq](https://github.com/gaopengcuhk/Stable-Pix2Seq), [Pix2Seq](https://github.com/google-research/pix2seq), [DETR](https://github.com/facebookresearch/detr), [Swin-Transformer](https://github.com/microsoft/Swin-Transformer), [SPTS](https://github.com/shannanyinxiang/SPTS) and [ABCNet](https://github.com/aim-uofa/AdelaiDet) for their excellent works.
