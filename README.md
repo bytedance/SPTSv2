@@ -140,7 +140,7 @@ The end-to-end recognition performances of SPTSv2 on five public benchmarks are:
 
 @article{liu2023spts,
   title={SPTS v2: Single-Point Scene Text Spotting},
-  author={Liu, Yuliang and Zhang, Jiaxin and Peng, Dezhi and Huang, Mingxin and Wang, Xinyu and Tang, Jingqun and Huang, Can and Lin, Dahua and Shen, Chunhua and Bai, Xiang and others},
+  author={Liu, Yuliang and Zhang, Jiaxin and Peng, Dezhi and Huang, Mingxin and Wang, Xinyu and Tang, Jingqun and Huang, Can and Lin, Dahua and Shen, Chunhua and Bai, Xiang and Jin, Lianwen},
   journal={arXiv preprint arXiv:2301.01635},
   year={2023}
 }
