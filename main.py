@@ -93,7 +93,7 @@ def get_args_parser():
                         help="Size of the embeddings (dimension of the transformer)")
     parser.add_argument('--dropout', default=0.1, type=float,
                         help="Dropout applied in the transformer")
-    parser.add_argument('--depths', default=[6], type=int,
+    parser.add_argument('--depths', default=6, type=int,
                         help="swin transformer structure")
     parser.add_argument('--nheads', default=8, type=int,
                         help="Number of attention heads inside the transformer's attentions")
