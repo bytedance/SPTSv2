@@ -20,7 +20,7 @@ from util.visualize import vis_output_seqs, extract_result_from_output_seqs, con
 def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
                     data_loader: Iterable, optimizer: torch.optim.Optimizer,
                     device: torch.device, epoch: int, max_norm: float = 0, 
-                    lr_scheduler: list = [0], print_freq: int = 10):
+                    lr_scheduler: list = [0], print_freq: int = 10, text_length: int = 25):
     model.train()
     criterion.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
@@ -35,7 +35,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
         if not all(input_label_seqs.tolist()):
             continue
         output_seqs = torch.cat([output_box_seqs.flatten(),output_label_seqs.flatten() ])
-        outputs_box, outputs_label = model(samples, input_box_seqs, input_label_seqs)
+        outputs_box, outputs_label = model(samples, input_box_seqs, input_label_seqs, text_length)
         outputs_box = outputs_box.reshape(-1, outputs_box.shape[-1])
         outputs_label = outputs_label.reshape(-1, outputs_label.shape[-1])
         outputs = torch.cat([outputs_box,outputs_label],0)
