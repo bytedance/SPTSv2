@@ -74,7 +74,7 @@ def train_one_epoch(model: torch.nn.Module, criterion: torch.nn.Module,
 
 
 @torch.no_grad()
-def evaluate(model, criterion, data_loader, device, output_dir, chars, start_index, visualize=False):
+def evaluate(model, criterion, data_loader, device, output_dir, chars, start_index, visualize=False, text_length=25):
     model.eval()
     criterion.eval()
     chars = list(chars)
@@ -93,7 +93,7 @@ def evaluate(model, criterion, data_loader, device, output_dir, chars, start_ind
         seq = torch.ones(len(targets), 1).to(samples.mask) * start_index
         torch.cuda.synchronize()
         t0 = time.time()
-        outputs = model(samples, seq,seq)
+        outputs = model(samples, seq,seq, text_length)
         torch.cuda.synchronize()
         t1 = time.time()
         cnt += 1

@@ -208,7 +208,8 @@ def main(args):
         evaluate(model, criterion,
                  data_loader_val, device, 
                  args.output_dir, args.chars, 
-                 args.start_index, args.visualize)
+                 args.start_index, args.visualize,
+                 args.max_length)
         return
 
     print("Start training")
