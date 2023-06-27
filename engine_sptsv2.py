@@ -104,7 +104,7 @@ def evaluate(model, criterion, data_loader, device, output_dir, chars, start_ind
         outputs, values, rec_scores = outputs
         if visualize:
             samples_ = samples.to(torch.device('cpu')); outputs_ = outputs.cpu()
-            vis_images = vis_output_seqs(samples_, outputs_, rec_scores, False)
+            vis_images = vis_output_seqs(samples_, outputs_, rec_scores, False, True, text_length, chars)
             for vis_image, target, dataset_name in zip(vis_images, targets, dataset_names):
                 save_path = os.path.join(output_dir, 'vis', dataset_name, '{:06d}.jpg'.format(target['image_id'].item()))
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
@@ -113,7 +113,7 @@ def evaluate(model, criterion, data_loader, device, output_dir, chars, start_ind
         outputs = outputs.cpu(); values = values.cpu(); rec_scores = rec_scores.cpu()
         for target, output, value, rec_score in zip(targets, outputs, values, rec_scores):
             image_id = target['image_id'].item()
-            output, split_index = extract_result_from_output_seqs(output, rec_score, return_index=True)
+            output, split_index = extract_result_from_output_seqs(output, rec_score, return_index=True, text_length=text_length, chars=chars)
             split_values = [value[split_index[i]:split_index[i+1]] for i in range(0, len(split_index)-1)]
             center_pts = output['center_pts']; rec_labels = output['rec']; rec_scores = output['key_rec_score']
             rec_labels = convert_rec_to_str(rec_labels, chars)

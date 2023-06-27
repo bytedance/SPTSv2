@@ -9,8 +9,9 @@ import numpy as np
     
 def extract_result_from_output_seqs(
      seqs, rec_score, key_pts='center_pts', key_label='rec', return_index=False,
-     end_index=1097, bins=1000, padding_bins=0, pad_rec=True
+     bins=1000, padding_bins=0, pad_rec=True, text_length=25, chars=[]
     ):
+    end_index = bins + len(chars) + 1
     target = {
         key_pts: [],
         key_label: [],
@@ -19,7 +20,7 @@ def extract_result_from_output_seqs(
     # pts_len = 16 if key_pts=='bezier_pts' else 4
     pts_len = 2
     category_start_index = bins + 2*padding_bins
-    rec_score = rec_score[:, category_start_index:category_start_index+95]
+    rec_score = rec_score[:, category_start_index:category_start_index+len(chars)]
     split_index = [0, ]; index = 0; rec_index = 0
     while(True):
         if index >= len(seqs) or seqs[index] == end_index:
@@ -36,7 +37,7 @@ def extract_result_from_output_seqs(
                     break 
                 index += 1
         else:
-            label = seqs[index:index+25]; index += 25
+            label = seqs[index:index+text_length]; index += text_length
             label = torch.clamp(label, min=category_start_index, max=end_index-1) - category_start_index
             if end_index - 1 in label:
                 if torch.min(torch.where(label==end_index-1)[0]) == 0:
@@ -45,8 +46,8 @@ def extract_result_from_output_seqs(
         split_index.append(index)
         target[key_pts].append(pts)
         target[key_label].append(label)
-        target['key_rec_score'].append(rec_score[rec_index:rec_index+25].softmax(-1))
-        rec_index = rec_index +25
+        target['key_rec_score'].append(rec_score[rec_index:rec_index+text_length].softmax(-1))
+        rec_index = rec_index +text_length
     if return_index:
         return target, split_index
     return target
@@ -128,13 +129,12 @@ def draw_text(image, text, pt):
     cv2.putText(image, text, (int(pt[0]), int(pt[1])), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
     return image
 
-def vis_output_seqs(samples, output_seqs, rec_scores, remove_padding=False, pad_rec=False):
-    chars = list(' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~')
+def vis_output_seqs(samples, output_seqs, rec_scores, remove_padding=False, pad_rec=False, text_length=25, chars=[]):
     tensors = samples.tensors
     targets = []
     # targets = [extract_result_from_output_seqs(ele, pad_rec=pad_rec) for ele in output_seqs]  
     for ele, rec_score in zip(output_seqs, rec_scores):
-        targets.append(extract_result_from_output_seqs(ele, rec_score, pad_rec=pad_rec))
+        targets.append(extract_result_from_output_seqs(ele, rec_score, pad_rec=pad_rec, text_length=text_length , chars=chars))
     center_pts = [convert_pt_to_pixel(target['center_pts'], tensors.shape[2], tensors.shape[3]) for target in targets]
     rec_labels = [convert_rec_to_str(target['rec'], chars) for target in targets]
     vis_images = []
