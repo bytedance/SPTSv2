@@ -83,11 +83,11 @@ class ConvertCocoPolysToMask(object):
 
         recog = [obj['rec'][:self.max_length] for obj in anno]
         recog = torch.tensor(recog, dtype=torch.long).reshape(-1, self.max_length)
-        target["rec"]  = recog
+        target["rec"]  = recog[keep]
 
         bezier_pts = [obj['bezier_pts'] for obj in anno]
         bezier_pts = torch.tensor(bezier_pts, dtype=torch.float32).reshape(-1, 16)
-        target['bezier_pts'] = bezier_pts
+        target['bezier_pts'] = bezier_pts[keep]
         center_pts = torch.zeros(bezier_pts.shape[0], 2)
         for i in range(bezier_pts.shape[0]):
             tmp = bezier_pts[i]
@@ -142,7 +142,7 @@ class ConvertCocoPolysToMask(object):
             center_pts[i][0] = xc
             center_pts[i][1] = yc            
         
-        target['center_pts'] = center_pts
+        target['center_pts'] = center_pts[keep]
         assert target['center_pts'].shape[0] == target['bezier_pts'].shape[0]
         return image, target
 
