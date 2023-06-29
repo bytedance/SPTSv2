@@ -68,6 +68,7 @@ def get_args_parser():
     parser.add_argument('--img_path', default="", type=str, help='path for the image to be detected')
     return parser
 
+@torch.no_grad()
 def main(args):
     args = process_args(args)
     device = torch.device(args.device)
@@ -106,18 +107,18 @@ def main(args):
     model.eval()
 
     # get predictions
-    output = model(image_new,seq,seq)
+    output = model(image_new,seq,seq, text_length=args.max_length)
     outputs, values, _ = output
-    N = (outputs[0].shape[0])//27
+    N = (outputs[0].shape[0])//(args.max_length+2)
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     for i in range(N):
-        v = values[0][27*i:(27)*i+27].mean().item()
+        v = values[0][(args.max_length+2)*i:((args.max_length+2))*i+(args.max_length+2)].mean().item()
         if v > 0.922:
             text = ''
-            pts_x = outputs[0][27*i].item() * (float(w_ori) / 1000)
-            pts_y = outputs[0][27*i+1].item() * (float(h_ori) / 1000)
-            for c in outputs[0][27*i+2:27*i+27].tolist():
-                if 1000 < c <1096:
+            pts_x = outputs[0][(args.max_length+2)*i].item() * (float(w_ori) / 1000)
+            pts_y = outputs[0][(args.max_length+2)*i+1].item() * (float(h_ori) / 1000)
+            for c in outputs[0][(args.max_length+2)*i+2:(args.max_length+2)*i+(args.max_length+2)].tolist():
+                if 1000 < c < 1000 + len(args.chars) + 1:
                         text += args.chars[c-1000]
                 else:
                     break

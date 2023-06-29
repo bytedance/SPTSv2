@@ -93,7 +93,7 @@ def get_args_parser():
                         help="Size of the embeddings (dimension of the transformer)")
     parser.add_argument('--dropout', default=0.1, type=float,
                         help="Dropout applied in the transformer")
-    parser.add_argument('--depths', default=[6], type=int,
+    parser.add_argument('--depths', default=6, type=int,
                         help="swin transformer structure")
     parser.add_argument('--nheads', default=8, type=int,
                         help="Number of attention heads inside the transformer's attentions")
@@ -208,7 +208,8 @@ def main(args):
         evaluate(model, criterion,
                  data_loader_val, device, 
                  args.output_dir, args.chars, 
-                 args.start_index, args.visualize)
+                 args.start_index, args.visualize,
+                 args.max_length)
         return
 
     print("Start training")
@@ -225,7 +226,7 @@ def main(args):
             sampler_train.set_epoch(epoch)
         train_stats = train_one_epoch(
             model, criterion, data_loader_train, optimizer, device, epoch,
-            args.clip_max_norm, learning_rate_schedule, args.print_freq)
+            args.clip_max_norm, learning_rate_schedule, args.print_freq, args.max_length)
         lr_scheduler.step()
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']

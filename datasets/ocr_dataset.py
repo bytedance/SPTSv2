@@ -20,10 +20,10 @@ import datasets.sptsv2_transforms as T
 
 
 class CocoDetection(torchvision.datasets.CocoDetection):
-    def __init__(self, img_folder, ann_file, transforms, return_masks, dataset_name):
+    def __init__(self, img_folder, ann_file, transforms, return_masks, dataset_name, max_length):
         super(CocoDetection, self).__init__(img_folder, ann_file)
         self._transforms = transforms
-        self.prepare = ConvertCocoPolysToMask(return_masks, dataset_name)
+        self.prepare = ConvertCocoPolysToMask(return_masks, dataset_name, max_length)
 
     def __getitem__(self, idx):
         img, target = super(CocoDetection, self).__getitem__(idx)
@@ -37,9 +37,10 @@ class CocoDetection(torchvision.datasets.CocoDetection):
 
 
 class ConvertCocoPolysToMask(object):
-    def __init__(self, return_masks=False, dataset_name=''):
+    def __init__(self, return_masks=False, dataset_name='', max_length=25):
         self.return_masks = return_masks
         self.dataset_name = dataset_name
+        self.max_length = max_length
 
     def __call__(self, image, target):
         w, h = image.size
@@ -80,13 +81,13 @@ class ConvertCocoPolysToMask(object):
         target["orig_size"] = torch.as_tensor([int(h), int(w)])
         target["size"] = torch.as_tensor([int(h), int(w)])
 
-        recog = [obj['rec'][:25] for obj in anno]
-        recog = torch.tensor(recog, dtype=torch.long).reshape(-1, 25)
-        target["rec"]  = recog
+        recog = [obj['rec'][:self.max_length] for obj in anno]
+        recog = torch.tensor(recog, dtype=torch.long).reshape(-1, self.max_length)
+        target["rec"]  = recog[keep]
 
         bezier_pts = [obj['bezier_pts'] for obj in anno]
         bezier_pts = torch.tensor(bezier_pts, dtype=torch.float32).reshape(-1, 16)
-        target['bezier_pts'] = bezier_pts
+        target['bezier_pts'] = bezier_pts[keep]
         center_pts = torch.zeros(bezier_pts.shape[0], 2)
         for i in range(bezier_pts.shape[0]):
             tmp = bezier_pts[i]
@@ -141,7 +142,7 @@ class ConvertCocoPolysToMask(object):
             center_pts[i][0] = xc
             center_pts[i][1] = yc            
         
-        target['center_pts'] = center_pts
+        target['center_pts'] = center_pts[keep]
         assert target['center_pts'].shape[0] == target['bezier_pts'].shape[0]
         return image, target
 
@@ -226,7 +227,7 @@ def build(image_set, args):
               args.max_size_test, args.min_size_test, args.crop_min_ratio, args.crop_max_ratio,
               args.crop_prob, args.rotate_max_angle, args.rotate_prob, args.brightness, args.contrast,
               args.saturation, args.hue, args.distortion_prob)
-        dataset = CocoDetection(img_folder, ann_file, transforms=transforms, return_masks=args.masks, dataset_name=dataset_name)
+        dataset = CocoDetection(img_folder, ann_file, transforms=transforms, return_masks=args.masks, dataset_name=dataset_name, max_length=args.max_length)
         datasets.append(dataset)
     
     if len(datasets) > 1:
